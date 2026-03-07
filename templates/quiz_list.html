@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Quiz List - {{ member }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2em;
+        }
+        
+        .xp-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .category {
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .category-title {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px 10px 0 0;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.2em;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .quiz-list {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+        }
+        
+        .quiz-item {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        
+        .quiz-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quiz-item:hover {
+            background: #f8f9ff;
+        }
+        
+        .quiz-info {
+            flex: 1;
+        }
+        
+        .quiz-question {
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .quiz-meta {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .quiz-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-correct {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .status-incorrect {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .xp-reward {
+            background: #fff3e0;
+            color: #f57c00;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <h1>📝 Available Quizzes</h1>
+            <div class="xp-badge">
+                🏆 {{ total_xp }} XP
+            </div>
+        </div>
+        <p style="color: #666;">Welcome, {{ member }}! Select a quiz to start earning XP.</p>
+    </div>
+    
+    {% for category, quizzes in categories.items() %}
+    <div class="category">
+        <div class="category-title">
+            📚 {{ category.title() }}
+        </div>
+        <div class="quiz-list">
+            {% for quiz in quizzes %}
+            <div class="quiz-item">
+                <div class="quiz-info">
+                    <div class="quiz-question">{{ quiz.question }}</div>
+                    <div class="quiz-meta">
+                        {% if quiz.user_answer %}
+                            {% if quiz.user_correct %}
+                                ✅ Correct!
+                            {% else %}
+                                ❌ Incorrect (Your answer: {{ quiz.user_answer }})
+                            {% endif %}
+                        {% else %}
+                            Not attempted yet
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <span class="xp-reward">+{{ quiz.xp_reward }} XP</span>
+                    {% if quiz.user_answer %}
+                        <span class="quiz-status status-{% if quiz.user_correct %}correct{% else %}incorrect{% endif %}">
+                            {% if quiz.user_correct %}Completed{% else %}Attempted{% endif %}
+                        </span>
+                    {% else %}
+                        <a href="/quiz/{{ quiz.id }}?member={{ member }}" class="quiz-status status-pending" style="text-decoration: none;">
+                            Start Quiz →
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    
+    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <a href="/leaderboard?member={{ member }}" class="back-link">🏆 View Leaderboard</a>
+        <br><br>
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+</body>
+</html>

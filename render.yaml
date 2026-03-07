@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: trello-quiz-app
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: NEON_DATABASE_URL
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.0
+    healthCheckPath: /
+    autoDeploy: true

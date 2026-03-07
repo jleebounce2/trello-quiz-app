@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Quiz - {{ member }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .xp-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .question {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .option {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .option-label {
+            flex: 1;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .already-attempted {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .already-attempted h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .already-attempted p {
+            color: #856404;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="xp-badge">
+            🏆 {{ total_xp }} XP
+        </div>
+        
+        {% if attempt %}
+        <div class="already-attempted">
+            <h3>⚠️ Already Attempted</h3>
+            <p>You've already answered this question. Your answer: <strong>{{ attempt.answer }}</strong></p>
+            {% if attempt.correct %}
+                <p style="color: #28a745; margin-top: 10px;">✅ Correct! You earned {{ attempt.xp_awarded }} XP</p>
+            {% else %}
+                <p style="color: #dc3545; margin-top: 10px;">❌ Incorrect. The correct answer was: <strong>{{ quiz.correct_answer }}</strong></p>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="question-number">{{ quiz.category }} Quiz</div>
+        <div class="question">{{ quiz.question }}</div>
+        
+        <form method="POST" action="/quiz/{{ quiz.id }}/submit?member={{ member }}">
+            <div class="options">
+                {% for option in quiz.options %}
+                <label class="option">
+                    <input type="radio" name="answer" value="{{ option[0] }}" required>
+                    <span class="option-label">{{ option[0] }}) {{ option[1] }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit Answer</button>
+        </form>
+        {% endif %}
+        
+        <a href="/quiz?member={{ member }}" class="back-link">← Back to Quiz List</a>
+    </div>
+</body>
+</html>

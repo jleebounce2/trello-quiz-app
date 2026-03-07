@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result - {{ member }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .result-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        
+        .result-title {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .result-correct {
+            color: #28a745;
+        }
+        
+        .result-incorrect {
+            color: #dc3545;
+        }
+        
+        .result-message {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .xp-gain {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .xp-gain h2 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        
+        .xp-gain p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .explanation {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .explanation h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .explanation p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if correct %}
+        <div class="result-icon">🎉</div>
+        <h1 class="result-title result-correct">Correct!</h1>
+        <div class="xp-gain">
+            <h2>+{{ xp_awarded }} XP</h2>
+            <p>Great job, {{ member }}!</p>
+        </div>
+        {% else %}
+        <div class="result-icon">😔</div>
+        <h1 class="result-title result-incorrect">Not Quite</h1>
+        <p class="result-message">
+            Your answer: <strong>{{ answer }}</strong><br>
+            Correct answer: <strong>{{ quiz.correct_answer }}</strong>
+        </p>
+        {% endif %}
+        
+        <div class="explanation">
+            <h3>📚 Question:</h3>
+            <p>{{ quiz.question }}</p>
+        </div>
+        
+        <a href="/quiz?member={{ member }}" class="btn">Continue Quizzing →</a>
+    </div>
+</body>
+</html>
