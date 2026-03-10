@@ -25,7 +25,7 @@ def quiz_list():
     cursor = conn.cursor()
     try:
         cursor.execute('SELECT q.*, qa.answer as user_answer, qa.correct as user_correct FROM quizzes q LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.member_name = %s ORDER BY q.category', (member,))
-        quizzes = [{'id': r[0], 'question': r[1], 'options': json.loads(r[2]), 'correct_answer': r[3], 'category': r[4], 'xp_reward': r[5], 'user_answer': r[7], 'user_correct': r[8]} for r in cursor.fetchall()]
+        quizzes = [{'id': r[0], 'question': r[1], 'options': r[2] if isinstance(r[2], list) else json.loads(r[2]), 'correct_answer': r[3], 'category': r[4], 'xp_reward': r[5], 'user_answer': r[7], 'user_correct': r[8]} for r in cursor.fetchall()]
         cursor.execute('SELECT total_xp FROM members WHERE name = %s', (member,))
         total_xp = cursor.fetchone()[0] if cursor.fetchone() else 0
     finally:
@@ -45,7 +45,7 @@ def quiz_take(quiz_id):
         cursor.execute('SELECT * FROM quizzes WHERE id = %s', (quiz_id,))
         r = cursor.fetchone()
         if not r: return "Quiz not found", 404
-        quiz = {'id': r[0], 'question': r[1], 'options': json.loads(r[2]), 'correct_answer': r[3], 'xp_reward': r[5]}
+        quiz = {'id': r[0], 'question': r[1], 'options': r[2] if isinstance(r[2], list) else json.loads(r[2]), 'correct_answer': r[3], 'xp_reward': r[5]}
         cursor.execute('SELECT * FROM quiz_attempts WHERE quiz_id = %s AND member_name = %s', (quiz_id, member))
         attempt = cursor.fetchone()
         cursor.execute('SELECT total_xp FROM members WHERE name = %s', (member,))
@@ -65,7 +65,7 @@ def quiz_submit(quiz_id):
     try:
         cursor.execute('SELECT * FROM quizzes WHERE id = %s', (quiz_id,))
         r = cursor.fetchone()
-        quiz = {'id': r[0], 'question': r[1], 'options': json.loads(r[2]), 'correct_answer': r[3], 'xp_reward': r[5]}
+        quiz = {'id': r[0], 'question': r[1], 'options': r[2] if isinstance(r[2], list) else json.loads(r[2]), 'correct_answer': r[3], 'xp_reward': r[5]}
         cursor.execute('SELECT * FROM quiz_attempts WHERE quiz_id = %s AND member_name = %s', (quiz_id, member))
         if cursor.fetchone(): return redirect(url_for('quiz_take', quiz_id=quiz_id, member=member))
         correct = (answer == quiz['correct_answer'])
